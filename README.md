@@ -22,6 +22,8 @@
 
 ```sh
 cargo run
+# or
+docker run -d -p 8080:8080 ghcr.io/lisoboss/hf-mirror:latest
 ```
 
 ## 访问示例

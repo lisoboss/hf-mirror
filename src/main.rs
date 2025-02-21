@@ -25,18 +25,22 @@ async fn main() {
         // https://huggingface.co/api/models/casperhansen/deepseek-r1-distill-llama-8b-awq/tree/main?recursive=True&expand=False
         .route(
             "/api/{resource_name}/{user_id}/{repo_id}/tree/main",
-            get(agent::hf_api),
+            get(agent::hf_list_repo_files),
+        )
+        .route(
+            "/api/{resource_name}/{user_id}/{repo_id}",
+            get(agent::hf_repo_info),
         )
         // https://huggingface.co/datasets/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B/resolve/main/generation_config.json
         .route(
             "/{resource_name}/{user_id}/{repo_id}/resolve/main/{*file_path}",
-            get(agent::hf_file),
+            get(agent::hf_hub_download),
         )
         // https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct/tree/main/special_tokens_map.json
         // https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B/resolve/main/generation_config.json
         .route(
             "/{user_id}/{repo_id}/resolve/main/{*file_path}",
-            get(agent::hf_file),
+            get(agent::hf_hub_download),
         );
 
     let listener = TcpListener::bind(&*HF_MIRROR_ADDR).await.unwrap();

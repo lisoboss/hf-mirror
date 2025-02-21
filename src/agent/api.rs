@@ -31,7 +31,9 @@ impl Default for RepoFile {
 }
 
 // https://huggingface.co/api/models/casperhansen/deepseek-r1-distill-llama-8b-awq/tree/main?recursive=True&expand=False
-pub(crate) async fn hf_api(Path(hf_api): Path<HFApi>) -> Result<Json<Vec<RepoFile>>, AppError> {
+pub(crate) async fn hf_list_repo_files(
+    Path(hf_api): Path<HFApi>,
+) -> Result<Json<Vec<RepoFile>>, AppError> {
     let repo_path = PathBuf::from(&*HF_MIRROR_PATH)
         .join(&hf_api.resource_name)
         .join(&hf_api.user_id)
@@ -48,4 +50,15 @@ pub(crate) async fn hf_api(Path(hf_api): Path<HFApi>) -> Result<Json<Vec<RepoFil
     })?;
 
     Ok(Json(repo_files))
+}
+
+#[derive(Debug, Serialize)]
+pub(crate) struct RepoInfo {
+    id: String,
+}
+
+pub(crate) async fn hf_repo_info(Path(hf_api): Path<HFApi>) -> Result<Json<RepoInfo>, AppError> {
+    Ok(Json(RepoInfo {
+        id: format!("{}/{}", hf_api.user_id, hf_api.repo_id),
+    }))
 }

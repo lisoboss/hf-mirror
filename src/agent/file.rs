@@ -24,7 +24,7 @@ pub(crate) struct HFFile {
 }
 
 // https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B/resolve/main/generation_config.json
-pub(crate) async fn hf_file(
+pub(crate) async fn hf_hub_download(
     Path(hf_file): Path<HFFile>,
     range: Option<TypedHeader<Range>>,
 ) -> Result<Response, AppError> {

@@ -1,4 +1,8 @@
-use crate::{error::AppError, git::file_tree, HF_MIRROR_PATH};
+use crate::{
+    error::AppError,
+    git::{commit_head_id, file_tree},
+    HF_MIRROR_PATH,
+};
 use axum::{extract::Path, Json};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -53,12 +57,32 @@ pub(crate) async fn hf_list_repo_files(
 }
 
 #[derive(Debug, Serialize)]
+pub(crate) struct Sibling {
+    rfilename: String,
+}
+
+#[derive(Debug, Serialize)]
 pub(crate) struct RepoInfo {
     id: String,
+    sha: String,
+    siblings: Vec<Sibling>,
 }
 
 pub(crate) async fn hf_repo_info(Path(hf_api): Path<HFApi>) -> Result<Json<RepoInfo>, AppError> {
+    let repo_path = PathBuf::from(&*HF_MIRROR_PATH)
+        .join(&hf_api.resource_name)
+        .join(&hf_api.user_id)
+        .join(&hf_api.repo_id);
+
+    let sha = commit_head_id(&repo_path)?;
+    let mut siblings: Vec<Sibling> = Vec::new();
+    file_tree(&repo_path, |path, _, _| {
+        siblings.push(Sibling { rfilename: path });
+    })?;
+
     Ok(Json(RepoInfo {
         id: format!("{}/{}", hf_api.user_id, hf_api.repo_id),
+        sha,
+        siblings,
     }))
 }

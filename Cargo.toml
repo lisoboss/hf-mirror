@@ -1,0 +1,17 @@
+[package]
+name = "hf-mirror"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.96"
+axum = "0.8.1"
+axum-extra = { version = "0.10.0", features = ["typed-header"] }
+axum-range = "0.5.0"
+git2 = "0.20.0"
+serde = { version = "1.0.218", features = ["derive"] }
+sha1 = "0.10.6"
+tokio = { version = "1.43.0", features = ["rt-multi-thread"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
